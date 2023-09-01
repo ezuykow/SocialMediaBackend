@@ -1,4 +1,4 @@
-package ru.ezuykow.socialmediabackend.configs;
+package ru.ezuykow.socialmediabackend.security.JWT;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import jakarta.servlet.FilterChain;
@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.ezuykow.socialmediabackend.security.JWTUtil;
 
 import java.io.IOException;
 

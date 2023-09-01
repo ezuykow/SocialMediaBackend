@@ -1,4 +1,4 @@
-package ru.ezuykow.socialmediabackend.security;
+package ru.ezuykow.socialmediabackend.security.JWT;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
