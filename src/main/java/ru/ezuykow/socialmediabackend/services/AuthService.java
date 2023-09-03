@@ -27,10 +27,13 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    public void checkExistence(User user, BindingResult bindingResult) {
+    public void checkExistenceAndUsername(User user, BindingResult bindingResult) {
         Optional<User> opt = userRepository.findUserByEmailOrUsername(user.getEmail(), user.getUsername());
         if (opt.isPresent()) {
             bindingResult.addError(new ObjectError("User", "This user already exists!"));
+        }
+        if (!user.getUsername().matches("\\w*")) {
+            bindingResult.addError(new ObjectError("User", "Username must consist of letters and numbers"));
         }
     }
 
