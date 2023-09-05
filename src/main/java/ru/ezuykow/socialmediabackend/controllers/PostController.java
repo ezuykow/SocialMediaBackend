@@ -10,13 +10,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.ezuykow.socialmediabackend.dto.EditPostDTO;
 import ru.ezuykow.socialmediabackend.dto.PostDTO;
 import ru.ezuykow.socialmediabackend.dto.PostPropertiesDTO;
+import ru.ezuykow.socialmediabackend.entities.Post;
 import ru.ezuykow.socialmediabackend.services.PostService;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -36,13 +38,9 @@ public class PostController {
             @RequestPart("properties") @Valid PostPropertiesDTO postPropertiesDTO,
             BindingResult bindingResult
     ) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-                    "errors: ",
-                    bindingResult.getAllErrors().stream()
-                            .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                            .collect(Collectors.toList())
-            ));
+        ResponseEntity<?> errorResponse = checkBindingResults(bindingResult);
+        if (errorResponse != null) {
+            return errorResponse;
         }
 
         PostDTO postDto = postService.createPost(auth.getName(), image, postPropertiesDTO);
@@ -54,7 +52,7 @@ public class PostController {
             @RequestParam("page") int page,
             @RequestParam("count") int count
     ) {
-        List<String> paramErrors = validateParams(page, count);
+        List<String> paramErrors = postService.validateRequestParams(page, count);
 
         if (!paramErrors.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
@@ -64,14 +62,59 @@ public class PostController {
         return ResponseEntity.ok(postService.getPostDTOs(page, count));
     }
 
-    private List<String> validateParams(int page, int count) {
-        List<String> errors = new LinkedList<>();
-        if (page < 0) {
-            errors.add("Page number must be 0 or more!");
+    @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> patchPost(
+            Authentication auth,
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            @RequestPart("properties") @Valid EditPostDTO editPostDTO,
+            BindingResult bindingResult
+    ) {
+        Optional<Post> targetPostOpt = postService.findById(editPostDTO.getPostId());
+        if (targetPostOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        if (count < 1) {
-            errors.add("Posts count on page must be 1 or more!");
+
+        Post targetPost = targetPostOpt.get();
+        if (!targetPost.getAuthor().getUsername().equals(auth.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return errors;
+
+        ResponseEntity<?> errorResponse = checkBindingResults(bindingResult);
+        if (errorResponse != null) {
+            return errorResponse;
+        }
+
+        PostDTO postDto = postService.patchPost(targetPost, image, editPostDTO);
+        return ResponseEntity.ok(postDto);
+    }
+
+    @DeleteMapping()
+    public ResponseEntity<?> deletePost(Authentication auth, @RequestParam("id") long postId) {
+        Optional<Post> targetPostOpt = postService.findById(postId);
+        if (targetPostOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Post targetPost = targetPostOpt.get();
+        if (!targetPost.getAuthor().getUsername().equals(auth.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        postService.deletePost(postId);
+        return ResponseEntity.ok().build();
+    }
+
+    //-----------------API END-----------------
+
+    private ResponseEntity<?> checkBindingResults(BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "errors: ",
+                    bindingResult.getAllErrors().stream()
+                            .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                            .collect(Collectors.toList())
+            ));
+        }
+        return null;
     }
 }

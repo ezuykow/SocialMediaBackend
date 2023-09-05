@@ -3,6 +3,7 @@ package ru.ezuykow.socialmediabackend.services;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.ezuykow.socialmediabackend.exceptions.ImageNotDeletedException;
 import ru.ezuykow.socialmediabackend.exceptions.ImageNotUploadedException;
 
 import java.io.IOException;
@@ -27,6 +28,16 @@ public class ImageService {
         Path imageFilePath = Path.of(imageDirPath, fileName);
         uploadFile(imageFilePath, image);
         return fileName;
+    }
+
+    public void deletePostImage(long postId) {
+        String fileName = postId + imageExtension;
+        Path imageFilePath = Path.of(imageDirPath, fileName);
+        try {
+            Files.deleteIfExists(imageFilePath);
+        } catch (IOException e) {
+            throw new ImageNotDeletedException(e.getMessage());
+        }
     }
 
     //-----------------API END-----------------
