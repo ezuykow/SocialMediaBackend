@@ -1,10 +1,11 @@
 package ru.ezuykow.socialmediabackend.services;
 
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.ezuykow.socialmediabackend.exceptions.ImageNotUploadedException;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -30,10 +31,13 @@ public class ImageService {
 
     //-----------------API END-----------------
 
-    @SneakyThrows
     private void uploadFile(Path path, MultipartFile file) {
-        Files.createDirectories(path.getParent());
-        Files.deleteIfExists(path);
-        file.transferTo(path);
+        try {
+            Files.createDirectories(path.getParent());
+            Files.deleteIfExists(path);
+            file.transferTo(path);
+        } catch (IOException e) {
+            throw new ImageNotUploadedException(e.getMessage());
+        }
     }
 }

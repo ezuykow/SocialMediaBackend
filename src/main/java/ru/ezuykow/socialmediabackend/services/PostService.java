@@ -2,6 +2,9 @@ package ru.ezuykow.socialmediabackend.services;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.ezuykow.socialmediabackend.dto.PostDTO;
@@ -40,4 +43,11 @@ public class PostService {
 
         return postMapper.mapPostToPostDto(post);
     }
+
+    public Page<Post> getPosts(int page, int count) {
+        Pageable postsPage = PageRequest.of(page, count);
+        return postRepository.findAll(postsPage);
+    }
+
+    //-----------------API START-----------------
 }

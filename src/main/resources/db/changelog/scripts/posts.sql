@@ -8,5 +8,5 @@ CREATE TABLE posts
     image_name     VARCHAR(50),
     title          VARCHAR(100)  NOT NULL,
     text           VARCHAR(4096) NOT NULL,
-    created_at_UTC DATE          NOT NULL
+    created_at_UTC TIMESTAMP          NOT NULL
 );
