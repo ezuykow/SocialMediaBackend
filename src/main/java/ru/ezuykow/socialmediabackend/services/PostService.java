@@ -17,6 +17,8 @@ import ru.ezuykow.socialmediabackend.repositories.UserRepository;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author ezuykow
@@ -47,6 +49,12 @@ public class PostService {
     public Page<Post> getPosts(int page, int count) {
         Pageable postsPage = PageRequest.of(page, count);
         return postRepository.findAll(postsPage);
+    }
+
+    public List<PostDTO> getPostDTOs(int page, int count) {
+        return getPosts(page, count).stream()
+                .map(postMapper::mapPostToPostDto)
+                .collect(Collectors.toList());
     }
 
     //-----------------API START-----------------

@@ -14,6 +14,7 @@ public class PostDTO {
 
     private Integer postId;
     private Integer authorId;
+    private String authorUsername;
     private String title;
     private String text;
     private String image;

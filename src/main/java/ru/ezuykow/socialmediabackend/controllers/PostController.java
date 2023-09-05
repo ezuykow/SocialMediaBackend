@@ -3,7 +3,6 @@ package ru.ezuykow.socialmediabackend.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.ezuykow.socialmediabackend.dto.PostDTO;
 import ru.ezuykow.socialmediabackend.dto.PostPropertiesDTO;
-import ru.ezuykow.socialmediabackend.entities.Post;
 import ru.ezuykow.socialmediabackend.services.PostService;
 
 import java.util.LinkedList;
@@ -63,8 +61,7 @@ public class PostController {
                     "errors:", paramErrors));
         }
 
-        Page<Post> posts = postService.getPosts(page, count);
-        return ResponseEntity.ok(posts.getContent());
+        return ResponseEntity.ok(postService.getPostDTOs(page, count));
     }
 
     private List<String> validateParams(int page, int count) {
