@@ -39,9 +39,19 @@ public class User {
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Post> posts;
 
-    @OneToMany(targetEntity = Subscribe.class, mappedBy = "subscriber", cascade = CascadeType.ALL)
+    @ManyToMany
+    @JoinTable(
+            name = "subscribes",
+            joinColumns = @JoinColumn(name = "subscriber_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "subscribe_to_user_id", referencedColumnName = "user_id")
+    )
     private Set<User> subscribedTo;
 
-    @OneToMany(targetEntity = Subscribe.class, mappedBy = "subscribedToUser", cascade = CascadeType.ALL)
+    @ManyToMany
+    @JoinTable(
+            name = "subscribes",
+            joinColumns = @JoinColumn(name = "subscribe_to_user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "subscriber_id", referencedColumnName = "user_id")
+    )
     private Set<User> subscribers;
 }
