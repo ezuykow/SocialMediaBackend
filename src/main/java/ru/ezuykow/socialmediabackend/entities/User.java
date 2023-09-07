@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author ezuykow
@@ -37,4 +38,10 @@ public class User {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Post> posts;
+
+    @OneToMany(targetEntity = Subscribe.class, mappedBy = "subscriber", cascade = CascadeType.ALL)
+    private Set<User> subscribedTo;
+
+    @OneToMany(targetEntity = Subscribe.class, mappedBy = "subscribedToUser", cascade = CascadeType.ALL)
+    private Set<User> subscribers;
 }

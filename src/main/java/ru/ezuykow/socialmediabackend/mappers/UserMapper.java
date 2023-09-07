@@ -3,6 +3,7 @@ package ru.ezuykow.socialmediabackend.mappers;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+import ru.ezuykow.socialmediabackend.dto.UserSubscriberDTO;
 import ru.ezuykow.socialmediabackend.dto.UserDTO;
 import ru.ezuykow.socialmediabackend.entities.User;
 
@@ -15,11 +16,14 @@ public class UserMapper {
 
     private final ModelMapper modelMapper;
 
-
     //-----------------API START-----------------
 
     public User mapUserDtoToUser(UserDTO dto) {
         return modelMapper.map(dto, User.class);
+    }
+
+    public UserSubscriberDTO mapUserToSubscriberDto(User user) {
+        return modelMapper.map(user, UserSubscriberDTO.class);
     }
 
     //-----------------API END-----------------
