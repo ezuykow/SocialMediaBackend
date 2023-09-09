@@ -10,9 +10,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.ezuykow.socialmediabackend.dto.EditPostDTO;
-import ru.ezuykow.socialmediabackend.dto.PostDTO;
-import ru.ezuykow.socialmediabackend.dto.PostPropertiesDTO;
+import ru.ezuykow.socialmediabackend.dto.post.EditPostDTO;
+import ru.ezuykow.socialmediabackend.dto.post.PostDTO;
+import ru.ezuykow.socialmediabackend.dto.post.PostPropertiesDTO;
 import ru.ezuykow.socialmediabackend.entities.Post;
 import ru.ezuykow.socialmediabackend.services.PostService;
 

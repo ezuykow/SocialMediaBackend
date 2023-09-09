@@ -1,4 +1,4 @@
-package ru.ezuykow.socialmediabackend.dto;
+package ru.ezuykow.socialmediabackend.dto.post;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

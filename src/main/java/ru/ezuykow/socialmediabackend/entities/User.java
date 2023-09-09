@@ -54,4 +54,20 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "subscriber_id", referencedColumnName = "user_id")
     )
     private Set<User> subscribers;
+
+    @ManyToMany
+    @JoinTable(
+            name = "friends_requests",
+            joinColumns = @JoinColumn(name = "request_from_user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "request_to_user_id", referencedColumnName = "user_id")
+    )
+    private Set<User> outcomeFriendsRequests;
+
+    @ManyToMany
+    @JoinTable(
+            name = "friends_requests",
+            joinColumns = @JoinColumn(name = "request_to_user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "request_from_user_id", referencedColumnName = "user_id")
+    )
+    private Set<User> incomeFriendsRequests;
 }

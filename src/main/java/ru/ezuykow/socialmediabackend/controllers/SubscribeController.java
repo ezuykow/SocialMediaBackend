@@ -7,6 +7,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.ezuykow.socialmediabackend.services.SubscribeService;
 
+import java.util.Map;
+
 /**
  * @author ezuykow
  */
@@ -27,6 +29,12 @@ public class SubscribeController {
             Authentication auth,
             @RequestParam("target") String username
     ) {
+        if (auth.getName().equals(username)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "error:", "Dont subscribe to self!"
+            ));
+        }
+
         subscribeService.changeSubscribe(auth.getName(), true, username);
         return ResponseEntity.ok().build();
     }

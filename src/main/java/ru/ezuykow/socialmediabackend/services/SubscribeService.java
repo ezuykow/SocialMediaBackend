@@ -42,9 +42,9 @@ public class SubscribeService {
     @Transactional
     public void changeSubscribe(String initiatorUsername, boolean subscribe, String targetUsername) {
         User target = userRepository.findUserByUsername(targetUsername)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new UserNotFoundException(targetUsername));
         User initiator = userRepository.findUserByUsername(initiatorUsername)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new UserNotFoundException(initiatorUsername));
 
         if (subscribe) {
             initiator.getSubscribedTo().add(target);

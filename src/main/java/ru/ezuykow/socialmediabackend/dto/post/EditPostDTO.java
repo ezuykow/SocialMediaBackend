@@ -1,4 +1,4 @@
-package ru.ezuykow.socialmediabackend.dto;
+package ru.ezuykow.socialmediabackend.dto.post;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

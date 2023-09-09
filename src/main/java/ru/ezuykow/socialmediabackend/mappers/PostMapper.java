@@ -2,8 +2,8 @@ package ru.ezuykow.socialmediabackend.mappers;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import ru.ezuykow.socialmediabackend.dto.PostDTO;
-import ru.ezuykow.socialmediabackend.dto.PostPropertiesDTO;
+import ru.ezuykow.socialmediabackend.dto.post.PostDTO;
+import ru.ezuykow.socialmediabackend.dto.post.PostPropertiesDTO;
 import ru.ezuykow.socialmediabackend.entities.Post;
 
 /**
