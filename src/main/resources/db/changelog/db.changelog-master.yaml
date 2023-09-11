@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/scripts/subscribes.sql
   - include:
       file: db/changelog/scripts/friends_requests.sql
+  - include:
+      file: db/changelog/scripts/friends.sql

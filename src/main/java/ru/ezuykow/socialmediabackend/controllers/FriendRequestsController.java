@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import ru.ezuykow.socialmediabackend.services.FriendsService;
+import ru.ezuykow.socialmediabackend.services.FriendRequestsService;
 
 import java.util.Map;
 
@@ -13,20 +13,20 @@ import java.util.Map;
  * @author ezuykow
  */
 @RestController
-@RequestMapping("/friends")
+@RequestMapping("/friends/requests")
 @RequiredArgsConstructor
-public class FriendController {
+public class FriendRequestsController {
 
-    private final FriendsService friendsService;
+    private final FriendRequestsService friendRequestsService;
 
     //-----------------API START-----------------
 
-    @GetMapping("/requests")
+    @GetMapping()
     public ResponseEntity<?> getFriendsRequests(Authentication auth) {
-        return ResponseEntity.ok(friendsService.getFriendsRequests(auth.getName()));
+        return ResponseEntity.ok(friendRequestsService.getFriendsRequests(auth.getName()));
     }
 
-    @PostMapping("/requests/outcome")
+    @PostMapping("/outcome")
     public ResponseEntity<?> sendFriendsRequest(
             Authentication auth,
             @RequestParam("target") String username
@@ -37,25 +37,25 @@ public class FriendController {
             ));
         }
 
-        friendsService.sendFriendRequest(auth.getName(), username);
+        friendRequestsService.sendFriendRequest(auth.getName(), username);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/requests/outcome")
+    @DeleteMapping("/outcome")
     public ResponseEntity<?> dropFriendRequest(
             Authentication auth,
             @RequestParam("target") String username
     ) {
-        friendsService.dropFriendRequest(auth.getName(), username);
+        friendRequestsService.dropFriendRequest(auth.getName(), username);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/requests/income")
+    @DeleteMapping("/income")
     public ResponseEntity<?> rejectRequest(
             Authentication auth,
             @RequestParam("target") String username
     ) {
-        friendsService.rejectFriendRequest(auth.getName(), username);
+        friendRequestsService.rejectFriendRequest(auth.getName(), username);
         return ResponseEntity.ok().build();
     }
 

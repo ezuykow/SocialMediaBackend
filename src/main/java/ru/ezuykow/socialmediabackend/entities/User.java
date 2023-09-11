@@ -70,4 +70,12 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "request_from_user_id", referencedColumnName = "user_id")
     )
     private Set<User> incomeFriendsRequests;
+
+    @ManyToMany
+    @JoinTable(
+            name = "friends",
+            joinColumns = @JoinColumn(name = "target_user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "user_id")
+    )
+    private Set<User> friends;
 }
