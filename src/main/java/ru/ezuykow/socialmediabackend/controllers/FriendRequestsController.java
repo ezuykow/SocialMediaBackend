@@ -41,6 +41,22 @@ public class FriendRequestsController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/income")
+    public ResponseEntity<?> acceptFriendsRequest(
+            Authentication auth,
+            @RequestParam("target") String username
+    ) {
+        boolean success = friendRequestsService.acceptFriendsRequest(auth.getName(), username);
+
+        if (success) {
+            return ResponseEntity.ok().build();
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                "error:", "Request from " + username + "not existent"
+        ));
+    }
+
     @DeleteMapping("/outcome")
     public ResponseEntity<?> dropFriendRequest(
             Authentication auth,

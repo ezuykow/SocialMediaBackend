@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.ezuykow.socialmediabackend.dto.FriendDTO;
 import ru.ezuykow.socialmediabackend.entities.User;
-import ru.ezuykow.socialmediabackend.exceptions.UserNotFoundException;
 import ru.ezuykow.socialmediabackend.mappers.UserMapper;
-import ru.ezuykow.socialmediabackend.repositories.UserRepository;
 
 import java.util.List;
 import java.util.Map;
@@ -18,14 +16,15 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class FriendRequestsService {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
+    private final FriendsService friendsService;
+    private final SubscribeService subscribeService;
     private final UserMapper userMapper;
 
     //-----------------API START-----------------
 
     public Map<String, List<FriendDTO>> getFriendsRequests(String initiatorUsername) {
-        User initiator = userRepository.findUserByUsername(initiatorUsername)
-                .orElseThrow(UserNotFoundException::new);
+        User initiator = userService.findUserByUsername(initiatorUsername);
 
         List<FriendDTO> fromMe = initiator.getOutcomeFriendsRequests()
                 .stream().map(userMapper::mapUserToFriendDto).toList();
@@ -39,40 +38,53 @@ public class FriendRequestsService {
     }
 
     public void sendFriendRequest(String fromUsername, String toUsername) {
-        User initiator = userRepository.findUserByUsername(fromUsername)
-                .orElseThrow(() -> new UserNotFoundException(fromUsername));
-        User target = userRepository.findUserByUsername(toUsername)
-                .orElseThrow(() -> new UserNotFoundException(toUsername));
+        User initiator = userService.findUserByUsername(fromUsername);
+        User target = userService.findUserByUsername(toUsername);
 
         initiator.getOutcomeFriendsRequests().add(target);
         initiator.getSubscribedTo().add(target);
         target.getIncomeFriendsRequests().add(initiator);
 
-        userRepository.saveAll(List.of(initiator, target));
+        userService.saveAll(List.of(initiator, target));
     }
 
     public void dropFriendRequest(String fromUsername, String toUsername) {
-        User initiator = userRepository.findUserByUsername(fromUsername)
-                .orElseThrow(() -> new UserNotFoundException(fromUsername));
-        User target = userRepository.findUserByUsername(toUsername)
-                .orElseThrow(() -> new UserNotFoundException(toUsername));
+        User initiator = userService.findUserByUsername(fromUsername);
+        User target = userService.findUserByUsername(toUsername);
 
-        initiator.getOutcomeFriendsRequests().remove(target);
-        target.getIncomeFriendsRequests().remove(initiator);
+        removeRequest(initiator, target);
 
-        userRepository.saveAll(List.of(initiator, target));
+        userService.saveAll(List.of(initiator, target));
     }
 
     public void rejectFriendRequest(String initiatorUsername, String fromUsername) {
-        User initiator = userRepository.findUserByUsername(initiatorUsername)
-                .orElseThrow(() -> new UserNotFoundException(initiatorUsername));
-        User target = userRepository.findUserByUsername(fromUsername)
-                .orElseThrow(() -> new UserNotFoundException((fromUsername)));
+        User initiator = userService.findUserByUsername(initiatorUsername);
+        User target = userService.findUserByUsername(fromUsername);
 
         initiator.getIncomeFriendsRequests().remove(target);
         target.getOutcomeFriendsRequests().remove(initiator);
 
-        userRepository.saveAll(List.of(initiator, target));
+        userService.saveAll(List.of(initiator, target));
     }
+
+    public boolean acceptFriendsRequest(String initiatorUsername, String targetUsername) {
+        User initiator = userService.findUserByUsername(initiatorUsername);
+        User target = userService.findUserByUsername(targetUsername);
+
+        if (initiator.getIncomeFriendsRequests().contains(target)) {
+            removeRequest(target, initiator);
+            friendsService.addToFriends(initiator, target);
+            subscribeService.addSubscribe(initiator, target);
+            return true;
+        }
+
+        return false;
+    }
+
     //-----------------API END-------------------
+
+    private void removeRequest(User fromUser, User toUser) {
+        fromUser.getOutcomeFriendsRequests().remove(toUser);
+        toUser.getIncomeFriendsRequests().remove(fromUser);
+    }
 }

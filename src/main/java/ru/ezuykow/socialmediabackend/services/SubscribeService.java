@@ -5,9 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.ezuykow.socialmediabackend.dto.UserSubscriberDTO;
 import ru.ezuykow.socialmediabackend.entities.User;
-import ru.ezuykow.socialmediabackend.exceptions.UserNotFoundException;
 import ru.ezuykow.socialmediabackend.mappers.UserMapper;
-import ru.ezuykow.socialmediabackend.repositories.UserRepository;
 
 import java.util.List;
 import java.util.Map;
@@ -19,14 +17,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SubscribeService {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final UserMapper userMapper;
 
     //-----------------API START-----------------
 
     public Map<String, List<UserSubscriberDTO>> findSubscribes(String username) {
-        User targetUser = userRepository.findUserByUsername(username)
-                .orElseThrow(UserNotFoundException::new);
+        User targetUser = userService.findUserByUsername(username);
 
         List<UserSubscriberDTO> toMe = targetUser.getSubscribers().stream()
                 .map(userMapper::mapUserToSubscriberDto).toList();
@@ -41,16 +38,24 @@ public class SubscribeService {
 
     @Transactional
     public void changeSubscribe(String initiatorUsername, boolean subscribe, String targetUsername) {
-        User target = userRepository.findUserByUsername(targetUsername)
-                .orElseThrow(() -> new UserNotFoundException(targetUsername));
-        User initiator = userRepository.findUserByUsername(initiatorUsername)
-                .orElseThrow(() -> new UserNotFoundException(initiatorUsername));
+        User target = userService.findUserByUsername(targetUsername);
+        User initiator = userService.findUserByUsername(initiatorUsername);
 
         if (subscribe) {
-            initiator.getSubscribedTo().add(target);
+            addSubscribe(initiator, target);
         } else {
-            initiator.getSubscribedTo().remove(target);
+            removeSubscribe(initiator, target);
         }
+
+        userService.save(initiator);
+    }
+
+    public void addSubscribe(User subscriber, User subscribeTo) {
+        subscriber.getSubscribedTo().add(subscribeTo);
+    }
+
+    public void removeSubscribe(User subscriber, User subscribedTo) {
+        subscriber.getSubscribedTo().remove(subscribedTo);
     }
 
     //-----------------API END-----------------
