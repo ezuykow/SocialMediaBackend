@@ -2,9 +2,11 @@ package ru.ezuykow.socialmediabackend.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.ezuykow.socialmediabackend.dto.FriendDTO;
 import ru.ezuykow.socialmediabackend.entities.User;
+import ru.ezuykow.socialmediabackend.mappers.UserMapper;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author ezuykow
@@ -14,12 +16,13 @@ import java.util.Set;
 public class FriendsService {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
     //-----------------API START-----------------
 
-    public Set<User> getMyFriends(String initiatorUsername) {
+    public List<FriendDTO> getMyFriends(String initiatorUsername) {
         User initiator = userService.findUserByUsername(initiatorUsername);
-        return initiator.getFriends();
+        return initiator.getFriends().stream().map(userMapper::mapUserToFriendDto).toList();
     }
 
     public void addToFriends(User fUser, User sUser) {

@@ -75,6 +75,7 @@ public class FriendRequestsService {
             removeRequest(target, initiator);
             friendsService.addToFriends(initiator, target);
             subscribeService.addSubscribe(initiator, target);
+            userService.saveAll(List.of(initiator, target));
             return true;
         }
 
