@@ -15,7 +15,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/subscribes")
 @RequiredArgsConstructor
-public class SubscribeController {
+public class SubscribesController {
 
     private final SubscribeService subscribeService;
 

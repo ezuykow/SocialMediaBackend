@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/posts")
 @RequiredArgsConstructor
-public class PostController {
+public class PostsController {
 
     private final PostService postService;
 

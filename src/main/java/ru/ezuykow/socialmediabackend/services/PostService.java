@@ -5,23 +5,23 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.ezuykow.socialmediabackend.dto.post.EditPostDTO;
 import ru.ezuykow.socialmediabackend.dto.post.PostDTO;
 import ru.ezuykow.socialmediabackend.dto.post.PostPropertiesDTO;
 import ru.ezuykow.socialmediabackend.entities.Post;
-import ru.ezuykow.socialmediabackend.exceptions.UserNotFoundException;
+import ru.ezuykow.socialmediabackend.entities.User;
 import ru.ezuykow.socialmediabackend.mappers.PostMapper;
 import ru.ezuykow.socialmediabackend.repositories.PostRepository;
-import ru.ezuykow.socialmediabackend.repositories.UserRepository;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 /**
  * @author ezuykow
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostMapper postMapper;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final PostRepository postRepository;
     private final ImageService imageService;
 
@@ -39,7 +39,7 @@ public class PostService {
 
     public PostDTO createPost(String username, MultipartFile image, @Valid PostPropertiesDTO postPropertiesDTO) {
         Post post = postMapper.mapPostPropertiesDtoToPost(postPropertiesDTO);
-        post.setAuthor(userRepository.findUserByUsername(username).orElseThrow(UserNotFoundException::new));
+        post.setAuthor(userService.findUserByUsername(username));
         post.setCreatedAt(LocalDateTime.now(ZoneOffset.UTC));
         post = postRepository.save(post);
 
@@ -60,10 +60,22 @@ public class PostService {
         return postRepository.findAll(postsPage);
     }
 
+    public Page<Post> getIdolsPosts(Set<User> idols, int page, int count) {
+        Pageable postsPage = PageRequest.of(page, count, Sort.by("createdAt"));
+        return postRepository.findPostsByAuthorIn(idols, postsPage);
+    }
+
+    public List<PostDTO> getIdolsPostDTOs(String initiatorUsername, int page, int count) {
+        User initiator = userService.findUserByUsername(initiatorUsername);
+        return getIdolsPosts(initiator.getSubscribedTo(), page, count)
+                .map(postMapper::mapPostToPostDto)
+                .toList();
+    }
+
     public List<PostDTO> getPostDTOs(int page, int count) {
         return getPosts(page, count).stream()
                 .map(postMapper::mapPostToPostDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public PostDTO patchPost(Post targetPost, MultipartFile image, @Valid EditPostDTO editPostDTO) {
