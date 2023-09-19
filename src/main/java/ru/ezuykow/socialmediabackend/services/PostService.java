@@ -1,5 +1,6 @@
 package ru.ezuykow.socialmediabackend.services;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -65,6 +66,7 @@ public class PostService {
         return postRepository.findPostsByAuthorIn(idols, postsPage);
     }
 
+    @Transactional
     public List<PostDTO> getIdolsPostDTOs(String initiatorUsername, int page, int count) {
         User initiator = userService.findUserByUsername(initiatorUsername);
         return getIdolsPosts(initiator.getSubscribedTo(), page, count)
