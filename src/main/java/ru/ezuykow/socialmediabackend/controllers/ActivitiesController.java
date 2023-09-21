@@ -40,8 +40,7 @@ public class ActivitiesController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Посты найдены",
                     content = {@Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = PostDTO.class)))
-            }),
+                            array = @ArraySchema(schema = @Schema(implementation = PostDTO.class)))}),
             @ApiResponse(responseCode = "400", description = "Некорректные параметры",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponseDTO.class))}),
