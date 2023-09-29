@@ -1,5 +1,6 @@
 package ru.ezuykow.socialmediabackend.services;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.ezuykow.socialmediabackend.dto.FriendDTO;
@@ -23,6 +24,7 @@ public class FriendRequestsService {
 
     //-----------------API START-----------------
 
+    @Transactional
     public Map<String, List<FriendDTO>> getFriendsRequests(String initiatorUsername) {
         User initiator = userService.findUserByUsername(initiatorUsername);
 

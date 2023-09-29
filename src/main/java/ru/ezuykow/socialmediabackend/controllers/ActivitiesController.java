@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -37,13 +38,12 @@ public class ActivitiesController {
     //-----------------API START-----------------
 
     @Operation(summary = "Получить посты кумиров", description = "Пользователь должен быть аутентифицирован")
+    @SecurityRequirement(name = "JWT")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Посты найдены",
-                    content = {@Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = PostDTO.class)))}),
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = PostDTO.class)))),
             @ApiResponse(responseCode = "400", description = "Некорректные параметры",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponseDTO.class))}),
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
             @ApiResponse(responseCode = "403", description = "Запрос от не аутентифицированного пользователя",
                     content = @Content())
     })

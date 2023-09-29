@@ -48,11 +48,9 @@ public class AuthController {
     @Operation(summary = "Зарегистрировать пользователя", description = "Возвращает токен аутентификации")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Пользователь зарегистрирован",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = JwtTokenDTO.class))}),
+                    content = @Content(schema = @Schema(implementation = JwtTokenDTO.class))),
             @ApiResponse(responseCode = "400", description = "Некорректные регистрационные данные",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponseDTO.class))})
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     public ResponseEntity<?> register(@RequestBody @Valid UserDTO userDto, BindingResult bindingResult) {
 
@@ -78,14 +76,11 @@ public class AuthController {
     @Operation(summary = "Аутентифицировать пользователя", description = "Возвращает токен аутентификации")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Пользователь аутентифицирован",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = JwtTokenDTO.class))}),
+                    content = @Content(schema = @Schema(implementation = JwtTokenDTO.class))),
             @ApiResponse(responseCode = "400", description = "Некорректные параметры",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponseDTO.class))}),
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
             @ApiResponse(responseCode = "403", description = "Неверные данные аутентификации",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponseDTO.class))})
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     public ResponseEntity<?> login(@RequestBody @Valid AuthDTO authDto, BindingResult bindingResult) {
 
